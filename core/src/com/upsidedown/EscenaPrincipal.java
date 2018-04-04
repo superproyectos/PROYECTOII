@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.upsidedown.punave.BotonNave;
 import com.upsidedown.punave.Nave;
 
 public class EscenaPrincipal implements Screen
