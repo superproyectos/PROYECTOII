@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,6 +31,7 @@ public class EscenaPrincipal implements Screen
 	private ImageButton congelar;
 	private boolean hayNave;
 	private Music musica;
+	private float a;
 	public EscenaPrincipal(Game UnJuego)
 	{
 
@@ -53,7 +55,7 @@ public class EscenaPrincipal implements Screen
 		fondo.setSpeed(1);
 		stage.addActor(fondo);
 
-
+		a=0;
 		tablero = new Tablero();
 		stage.addActor(tablero);
 		shape = new ShapeRenderer();
@@ -74,7 +76,8 @@ public class EscenaPrincipal implements Screen
 	}
 	private void limpiar()
 	{
-		Gdx.gl.glClearColor(181 / 255f, 235 / 255f, 238 / 255f, 1);
+		a+=0.001;
+		Gdx.gl.glClearColor(181*Math.abs((float)Math.cos(a)) / 255f, 235*Math.abs((float)Math.cos(a)) / 255f, 238*Math.abs((float)Math.cos(a) / 255f), 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -93,6 +96,7 @@ public class EscenaPrincipal implements Screen
 				{
 					stage.addActor(new Nave(Config.w/2,Config.h/4));
 					hayNave=true;
+					Config.SONIDOS[1].play();
 				}
 
 				return false;
@@ -104,6 +108,7 @@ public class EscenaPrincipal implements Screen
 			public boolean handle(Event event)
 			{
 				tablero.congelar();
+				Config.SONIDOS[1].play();
 				return false;
 			}
 		});
@@ -119,6 +124,7 @@ public class EscenaPrincipal implements Screen
 	@Override
 	public void render(float delta)
 	{
+
 		limpiar();
 		stage.act();
 		stage.draw();
@@ -154,5 +160,7 @@ public class EscenaPrincipal implements Screen
 		batch.dispose();
 		tablero.dispose();
 		musica.dispose();
+		for(Sound a:Config.SONIDOS)
+			a.dispose();
 	}
 }
