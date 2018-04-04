@@ -33,7 +33,8 @@ public class Config
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/pu.wav", Files.FileType.Internal)),
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/suelta.mp3", Files.FileType.Internal)),
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/shoot.wav", Files.FileType.Internal)),
-			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/toca.mp3", Files.FileType.Internal))
+			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/toca.mp3", Files.FileType.Internal)),
+			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/explo.wav", Files.FileType.Internal))
 	};
 	public static void setMundo(Vector2 g)
 	{

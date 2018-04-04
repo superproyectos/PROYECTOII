@@ -31,6 +31,7 @@ public class EscenaPrincipal implements Screen
 	private ImageButton congelar;
 	private boolean hayNave;
 	private Music musica;
+	private Nave nave;
 	private float a;
 	public EscenaPrincipal(Game UnJuego)
 	{
@@ -94,9 +95,11 @@ public class EscenaPrincipal implements Screen
 			{
 				if(!hayNave)
 				{
-					stage.addActor(new Nave(Config.w/2,Config.h/4));
+					nave=new Nave(Config.w/2,Config.h/4);
+					stage.addActor(nave);
 					hayNave=true;
 					Config.SONIDOS[1].play();
+					tablero.salida();
 				}
 
 				return false;
@@ -113,6 +116,16 @@ public class EscenaPrincipal implements Screen
 			}
 		});
 	}
+	private void estados()
+	{
+		if(nave!=null&&nave.getDisparos()>=10)
+		{
+			nave.remove();
+			nave=null;
+			Config.SONIDOS[5].play();
+			tablero.entrada();
+		}
+	}
 	@Override
 	public void show()
 	{
@@ -128,6 +141,7 @@ public class EscenaPrincipal implements Screen
 		limpiar();
 		stage.act();
 		stage.draw();
+		estados();
 	}
 
 	@Override
@@ -163,4 +177,5 @@ public class EscenaPrincipal implements Screen
 		for(Sound a:Config.SONIDOS)
 			a.dispose();
 	}
+
 }

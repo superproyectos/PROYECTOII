@@ -179,4 +179,12 @@ public class Creador
 		for (Figura a:elementos)
 			a.congelar();
 	}
+	public void salida()
+	{
+		areaCreacion.y=-1000;
+	}
+	public void entrada()
+	{
+		areaCreacion.y=Config.w/9;
+	}
 }

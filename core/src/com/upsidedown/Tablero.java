@@ -26,13 +26,14 @@ public class Tablero extends Actor
 
 	private Creador creador;
 	private ShapeRenderer shape;
-
+	private boolean dibujacreador;
 	/*<----------1. Constructor---------->*/
 
 	public Tablero()
 	{
 		shape = new ShapeRenderer();
 		creador=new Creador(shape);
+		dibujacreador=true;
 	}
 
 	@Override
@@ -54,7 +55,8 @@ public class Tablero extends Actor
 	private void campoJuego()
 	{
 		float ancho = Config.w / 9;
-		dibujaCuadros(ancho * 2, ancho, 3, 5, ancho, new Color(129 / 255f, 217 / 255f, 221 / 255f, 0.5f), false);
+		if(dibujacreador)
+			dibujaCuadros(ancho * 2, ancho, 3, 5, ancho, new Color(129 / 255f, 217 / 255f, 221 / 255f, 0.5f), false);
 		ancho = Config.w / 13;
 		Config.alfa();
 		dibujaCuadros(ancho * 4, Config.h-ancho*12, 10, 5, ancho, new Color(129 / 255f, 217 / 255f, 221 / 255f, 0.1f), true);
@@ -103,5 +105,15 @@ public class Tablero extends Actor
 	public void congelar()
 	{
 		creador.congelar();
+	}
+	public void salida()
+	{
+		dibujacreador=false;
+		creador.salida();
+	}
+	public void entrada()
+	{
+		dibujacreador=true;
+		creador.entrada();
 	}
 }

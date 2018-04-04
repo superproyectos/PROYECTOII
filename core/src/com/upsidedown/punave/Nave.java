@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.upsidedown.Config;
+import com.upsidedown.EscenaPrincipal;
 
 public class Nave extends Actor
 {
@@ -16,6 +17,7 @@ public class Nave extends Actor
 	private Sprite sprite;
 	private float yd;
 	private Array<Bala> balas;
+	private byte disparos=0;
 	public Nave(float x,float y)
 	{
 		batch = new SpriteBatch();
@@ -43,12 +45,16 @@ public class Nave extends Actor
 	}
 	private void disparar()
 	{
-		if(Gdx.input.justTouched())
+		if(Gdx.input.justTouched()&&disparos<10)
 		{
 			balas.add(new Bala(this.getX(),this.getY()+50,5));
 			Config.SONIDOS[3].play();
+			disparos++;
 		}
-
+	}
+	public Byte getDisparos()
+	{
+		return disparos;
 	}
 	private void balasDisparadas()
 	{
