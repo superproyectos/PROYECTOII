@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.upsidedown.Config;
 
 public class Nave extends Actor
 {
@@ -43,7 +44,11 @@ public class Nave extends Actor
 	private void disparar()
 	{
 		if(Gdx.input.justTouched())
+		{
 			balas.add(new Bala(this.getX(),this.getY()+50,5));
+			Config.SONIDOS[3].play();
+		}
+
 	}
 	private void balasDisparadas()
 	{

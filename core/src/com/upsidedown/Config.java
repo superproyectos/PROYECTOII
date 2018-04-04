@@ -28,7 +28,7 @@ public class Config
 			Config.color(131, 145, 146,1)/*gris*/,
 			Config.color(46, 64, 83,1)/*azul-gris*/,
 	};
-	public static final Sound []SONIDOS={
+	public static final Sound SONIDOS[]={
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/lose.mp3", Files.FileType.Internal)),
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/pu.wav", Files.FileType.Internal)),
 			Gdx.audio.newSound( Gdx.files.getFileHandle("sounds/suelta.mp3", Files.FileType.Internal)),

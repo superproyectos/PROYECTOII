@@ -99,7 +99,11 @@ public class Creador
 							figura.add(bloque);
 					}
 					else
+					{
 						figura.add(bloque);
+						Config.SONIDOS[4].play();
+					}
+
 				}
 				else
 				{
@@ -117,6 +121,7 @@ public class Creador
 				elementos.add(new Figura(figura,0));
 				figura.clear();
 				cambiarColor();
+				Config.SONIDOS[2].play();
 			}
 
 
