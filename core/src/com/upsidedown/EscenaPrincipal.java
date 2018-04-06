@@ -11,6 +11,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,7 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.upsidedown.punave.Nave;
 
-public class EscenaPrincipal implements Screen
+public class EscenaPrincipal implements Screen,ContactListener
 {
 	//Variables de escena
 	private Game Juego;
@@ -60,6 +65,8 @@ public class EscenaPrincipal implements Screen
 
 		r=181;g=235;b=238;
 		generaEscenario();
+
+		Config.mundo.setContactListener(this);
 	}
 
 	/*<----------GENERAR ESCENARIO---------->
@@ -167,6 +174,7 @@ public class EscenaPrincipal implements Screen
 	{
 		if(nave!=null&&nave.getDisparos()>=10)
 		{
+			nave.eliminaBalas();
 			nave.remove();
 			nave=null;
 			Config.SONIDOS[5].play();
@@ -251,4 +259,35 @@ public class EscenaPrincipal implements Screen
 			a.dispose();
 	}
 
+	@Override
+	public void beginContact(Contact contact)
+	{
+		/*if(contact.getFixtureA().getUserData()=="F"&&contact.getFixtureB().getUserData()=="B"||
+				contact.getFixtureA().getUserData()=="B"&&contact.getFixtureB().getUserData()=="F")
+		{
+			System.out.println("Entro");
+			Body cuerpo=contact.getFixtureA().getBody();
+			cuerpo.destroyFixture(contact.getFixtureA());
+
+			contact.getFixtureB().getBody().destroyFixture(contact.getFixtureB());
+		}*/
+	}
+
+	@Override
+	public void endContact(Contact contact)
+	{
+
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold)
+	{
+
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse)
+	{
+
+	}
 }

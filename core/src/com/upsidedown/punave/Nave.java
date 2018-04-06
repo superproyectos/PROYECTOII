@@ -56,6 +56,11 @@ public class Nave extends Actor
 	{
 		return disparos;
 	}
+	public void eliminaBalas()
+	{
+		for(Bala a:balas)
+			a.dispose();
+	}
 	private void balasDisparadas()
 	{
 		if(balas.size>0&&balas.first().y>Gdx.graphics.getHeight())

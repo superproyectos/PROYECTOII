@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -13,13 +14,11 @@ public class Figura
 {
 	private Array<Bloque>figura;
 	private Body cuerpo;
-	private World mundo;
 	private int tipo;
 	public Figura(Array<Bloque>figura,int tipo)
 	{
 		this.figura=new Array<Bloque>();
 		copiar(figura);
-		this.mundo=Config.mundo;
 		this.tipo=tipo;
 		cajaColision();
 	}
@@ -27,13 +26,13 @@ public class Figura
 	{
 		this.figura=new Array<Bloque>();
 		this.figura.add(figura);
-		this.mundo=Config.mundo;
 		this.tipo=tipo;
 		cajaColision();
 	}
 	private void cajaColision()
 	{
 		boolean creado=false;
+		byte cont=1;
 		for (Bloque bloque:figura)
 		{
 			PolygonShape shape=new PolygonShape();
@@ -42,7 +41,7 @@ public class Figura
 				BodyDef bodyDef=new BodyDef();
 				setTipo(bodyDef);
 				bodyDef.position.set((bloque.x+bloque.width/2)/Config.PPM,(bloque.y+bloque.height/2)/Config.PPM);
-				cuerpo=mundo.createBody(bodyDef);
+				cuerpo=Config.mundo.createBody(bodyDef);
 				shape.setAsBox(bloque.width/2/Config.PPM,bloque.height/2/Config.PPM);
 			}
 			else
@@ -59,7 +58,8 @@ public class Figura
 			propiedades.density=5f;
 			propiedades.restitution=.1f;
 			propiedades.friction=0.3f;
-			cuerpo.createFixture(propiedades);
+			Fixture fixture=cuerpo.createFixture(propiedades);
+			fixture.setUserData("F");
 			shape.dispose();
 			creado=true;
 		}
@@ -134,4 +134,5 @@ public class Figura
 		for (Bloque a:figura)
 			a.setColor(Color.CYAN);
 	}
+
 }
