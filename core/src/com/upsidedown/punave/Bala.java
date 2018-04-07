@@ -24,10 +24,17 @@ public class Bala extends Circle
 	}
 	private void dibujar()
 	{
-		shape.setColor(Color.RED);
-		shape.begin(ShapeRenderer.ShapeType.Filled);
-		shape.circle(x,y,radius);
-		shape.end();
+		/*for (Fixture a:cuerpo.getFixtureList())
+			if(a.isSensor())
+				return;*/
+		if(!cuerpo.getFixtureList().get(0).isSensor())
+		{
+			shape.setColor(Color.RED);
+			shape.begin(ShapeRenderer.ShapeType.Filled);
+			shape.circle(x,y,radius);
+			shape.end();
+		}
+
 	}
 	private void crearCuerpo()
 	{

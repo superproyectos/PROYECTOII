@@ -32,7 +32,6 @@ public class Figura
 	private void cajaColision()
 	{
 		boolean creado=false;
-		byte cont=1;
 		for (Bloque bloque:figura)
 		{
 			PolygonShape shape=new PolygonShape();
@@ -54,12 +53,16 @@ public class Figura
 				shape.setAsBox(bloque.width/2/Config.PPM,bloque.height/2/Config.PPM,v,cuerpo.getAngle());
 			}
 			FixtureDef propiedades=new FixtureDef();
+			propiedades.isSensor=false;
 			propiedades.shape=shape;
 			propiedades.density=5f;
 			propiedades.restitution=.1f;
 			propiedades.friction=0.3f;
 			Fixture fixture=cuerpo.createFixture(propiedades);
-			fixture.setUserData("F");
+			if(tipo==0)
+				fixture.setUserData("F");
+			else
+				fixture.setUserData("P");
 			shape.dispose();
 			creado=true;
 		}
@@ -84,32 +87,43 @@ public class Figura
 	public void actualizar()
 	{
 		float x,y,vx,vy;
-		for (Bloque bloque:figura)
-		{
-			/*
-			 Wow matemáticas en un videojuego.
-			 El eje de coordenadas del objeto está inclinado.P(x',y')
-			 El eje de dibujo es normal.P(x,y).
-			 Lo primero es rotar el eje inclinado hasta que llegue al del dibujo.
+		int cont=0;
+		Array<Fixture>propiedades=cuerpo.getFixtureList();
+		if(figura!=null)
+			for (Bloque bloque:figura)
+			{
+				/*
+			    Wow matemáticas en un videojuego.
+			    El eje de coordenadas del objeto está inclinado.P(x',y')
+			    El eje de dibujo es normal.P(x,y).
+			    Lo primero es rotar el eje inclinado hasta que llegue al del dibujo.
 
-			 x=x'cos@-y'sen@
-			 y=y'*cos@+x'cos@
+				 x=x'cos@-y'sen@
+				 y=y'*cos@+x'cos@
 
-			 Una vez obtenido el punto, es necesario trasladarlo al origen relativo del cuerpo.
-			 x+=xcuerpo
-			 y+=ycuerpo
+				 Una vez obtenido el punto, es necesario trasladarlo al origen relativo del cuerpo.
+				 x+=xcuerpo
+				 y+=ycuerpo
 
-			 Y se obtiene el punto en el eje normal :)
+				 Y se obtiene el punto en el eje normal :)
 
-			 */
-			x=bloque.getV().x;
-			y=bloque.getV().y;
-			vx=x*(float)Math.cos(cuerpo.getAngle())-y*(float)Math.sin(cuerpo.getAngle());
-			vy=y*(float)Math.cos(cuerpo.getAngle())+x*(float)Math.sin(cuerpo.getAngle());
-			vx+=cuerpo.getPosition().x;
-			vy+=cuerpo.getPosition().y;
-			bloque.setPosition(vx*Config.PPM-bloque.width/2,vy*Config.PPM-bloque.height/2);
-			bloque.dibujar((float)(cuerpo.getAngle()*180/Math.PI));
+			    */
+				x=bloque.getV().x;
+				y=bloque.getV().y;
+				vx=x*(float)Math.cos(cuerpo.getAngle())-y*(float)Math.sin(cuerpo.getAngle());
+				vy=y*(float)Math.cos(cuerpo.getAngle())+x*(float)Math.sin(cuerpo.getAngle());
+				vx+=cuerpo.getPosition().x;
+				vy+=cuerpo.getPosition().y;
+				bloque.setPosition(vx*Config.PPM-bloque.width/2,vy*Config.PPM-bloque.height/2);
+				if(bloque.y>Config.h+bloque.width*4)
+				{
+					dispose();
+					break;
+				}
+
+				if(!propiedades.get(cont).isSensor())
+					bloque.dibujar((float)(cuerpo.getAngle()*180/Math.PI));
+				cont++;
 		}
 
 	}
@@ -118,18 +132,30 @@ public class Figura
 		for (Bloque bloque:original)
 			figura.add(bloque);
 	}
-	public void fuerza(Vector2 F)
+	private void todosSensores()
 	{
-		cuerpo.applyForceToCenter(F.x,F.y,true);
+		boolean es=false;
+		if(cuerpo!=null)
+			for(Fixture a:cuerpo.getFixtureList())
+				if(!a.isSensor())
+				{
+					es=true;
+					break;
+				}
+		if(!es)
+			dispose();
 	}
 	public void dispose()
 	{
 		for (Bloque bloque:figura)
 			bloque.dispose();
+		for(Fixture a:cuerpo.getFixtureList())
+			cuerpo.destroyFixture(a);
+		Config.mundo.destroyBody(cuerpo);
+		figura=null;
 	}
 	public void congelar()
 	{
-		System.out.println("Entro");
 		cuerpo.setType(BodyDef.BodyType.StaticBody);
 		for (Bloque a:figura)
 			a.setColor(Color.CYAN);

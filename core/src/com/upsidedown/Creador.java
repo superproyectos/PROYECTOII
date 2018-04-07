@@ -13,13 +13,8 @@ package com.upsidedown;
 */
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
@@ -32,32 +27,18 @@ public class Creador
 	private Array<Figura> elementos;
 	private Rectangle areaCreacion;
 	private ShapeRenderer shape;
-	private OrthographicCamera camara;
-	private Box2DDebugRenderer camaraBordes;
-	private boolean debug;
 	private Color color;
-	Bloque ver;
+	private Bloque ver;
 	/*<----------1. Constructor---------->*/
 
 	public Creador(ShapeRenderer shape)
 	{
-
-		debug=false;
-
-
-
-
 		this.shape=shape;
 		areaCreacion=new Rectangle(Config.w/9 * 2, Config.w/9,Config.w/9*4,Config.w/9*2);
 		figura = new Array<Bloque>();
 		elementos=new Array<Figura>();
-		Config.setMundo(new Vector2(0, 5f));
-
 		ver=new Bloque(areaCreacion,Config.color(0,0,0,1));
-		camara=new OrthographicCamera();
-		camara.setToOrtho(false,Config.w/Config.PPM,Config.h/Config.PPM);
-		camara.position.set(Config.w/2,Config.h/2,0);
-		camaraBordes=new Box2DDebugRenderer();
+
 		crearPiso();
 		cambiarColor();
 
@@ -168,10 +149,11 @@ public class Creador
 		Config.mundo.step(Gdx.graphics.getDeltaTime(),6,2);
 		for(Figura a:elementos)
 		{
-			a.actualizar();
+			if(a!=null)
+				a.actualizar();
+			else
+				elementos.removeIndex(elementos.indexOf(a,false));
 		}
-		if(debug)
-			camaraBordes.render(Config.mundo,camara.combined);
 		//ver.dibujar(0);
 	}
 	public void congelar()

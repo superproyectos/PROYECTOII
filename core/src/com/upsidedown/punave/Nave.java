@@ -12,7 +12,6 @@ import com.upsidedown.EscenaPrincipal;
 
 public class Nave extends Actor
 {
-	private SpriteBatch batch;
 	private boolean entrada;
 	private Sprite sprite;
 	private float yd;
@@ -20,7 +19,6 @@ public class Nave extends Actor
 	private byte disparos=0;
 	public Nave(float x,float y)
 	{
-		batch = new SpriteBatch();
 		sprite=new Sprite(new Texture("ship.png"));
 		setX(x);
 		setY(Gdx.graphics.getHeight());
@@ -36,12 +34,6 @@ public class Nave extends Actor
 			setX(getX()-10);
 		else if(in<-1&&x+getWidth()+30<Gdx.graphics.getWidth())
 			setX(getX()+10);
-	}
-	private void dibujar()
-	{
-		batch.begin();
-		batch.draw(sprite.getTexture(), getX()-40, getY(),80,52);
-		batch.end();
 	}
 	private void disparar()
 	{
@@ -80,11 +72,9 @@ public class Nave extends Actor
 			mover();
 		disparar();
 		balasDisparadas();
-		dibujar();
 	}
 	public void dispose()
 	{
-		batch.dispose();
 		sprite.getTexture().dispose();
 	}
 	@Override
@@ -93,7 +83,7 @@ public class Nave extends Actor
 		batch.end();
 		actualizar();
 		batch.begin();
-
+		batch.draw(sprite.getTexture(), getX()-40, getY(),80,52);
 	}
 	@Override
 	public void act (float delta) {

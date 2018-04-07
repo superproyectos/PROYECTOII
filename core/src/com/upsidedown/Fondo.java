@@ -9,9 +9,10 @@ import com.badlogic.gdx.utils.Array;
 public class Fondo extends Actor {
 
 	private int scroll;
+	private Texture ciclo;
 	private Array<Texture> layers;
 	private final int LAYER_SPEED_DIFFERENCE = 2;
-
+	float ang=0;
 	private float x,y,width,heigth,escalaX,escalaY;
 	private int origenX, origenY,rotacion,srcX,srcY;
 	private boolean flipX,flipY;
@@ -20,9 +21,10 @@ public class Fondo extends Actor {
 
 	public Fondo (Array<Texture> textures){
 		layers = textures;
-		for(int i = 0; i <textures.size;i++){
+		for(int i = 0; i <layers.size;i++){
 			layers.get(i).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
 		}
+		ciclo=layers.get(4);
 		scroll = 0;
 		speed = 0;
 
@@ -42,8 +44,9 @@ public class Fondo extends Actor {
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
+		batch.draw(ciclo,0,-heigth/5,width/2,0,heigth,heigth,1,1,-30*(float)Math.sin(ang),0,0,ciclo.getWidth(),ciclo.getHeight(),false,false);
 		scroll+=speed;
-		for(int i = 0;i<layers.size;i++) {
+		for(int i = 0;i<4;i++) {
 			srcX = scroll + i*this.LAYER_SPEED_DIFFERENCE *scroll;
 			switch (i) {
 
@@ -63,6 +66,14 @@ public class Fondo extends Actor {
 		}
 
 
+	}
+	public void setAng(float g)
+	{
+		ang=g;
+	}
+	public void setMomento(boolean dia)
+	{
+		flipY=dia;
 	}
 }
 

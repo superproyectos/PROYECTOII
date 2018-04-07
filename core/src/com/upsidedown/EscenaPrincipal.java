@@ -7,14 +7,18 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -24,6 +28,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.upsidedown.punave.Nave;
+
+import static com.sun.corba.se.impl.naming.cosnaming.NamingContextImpl.debug;
 
 public class EscenaPrincipal implements Screen,ContactListener
 {
@@ -43,12 +49,19 @@ public class EscenaPrincipal implements Screen,ContactListener
 	//Power Ups
 	private Nave nave;
 
+	private OrthographicCamera camara;
+	private Box2DDebugRenderer camaraBordes;
+	private boolean debug;
+	private boolean dia;
+
+	Fondo fondo;
 	/*<----------CONSTRUCTOR---------->*/
 
 	public EscenaPrincipal(Game UnJuego)
 	{
 		//Inicializamos variables
 		Juego = UnJuego;
+		Config.setMundo(new Vector2(0, 5f));
 		stage = new Stage(new ScreenViewport());
 		batch = new SpriteBatch();
 		tablero = new Tablero();
@@ -67,6 +80,12 @@ public class EscenaPrincipal implements Screen,ContactListener
 		generaEscenario();
 
 		Config.mundo.setContactListener(this);
+		debug=false;
+		camara=new OrthographicCamera();
+		camara.setToOrtho(false,Config.w/Config.PPM,Config.h/Config.PPM);
+		camara.position.set(Config.w/2,Config.h/2,0);
+		camaraBordes=new Box2DDebugRenderer();
+		dia=true;
 	}
 
 	/*<----------GENERAR ESCENARIO---------->
@@ -88,7 +107,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 	private void crearFondo()
 	{
 		//Creamos el fondo
-		Fondo fondo = new Fondo(cargarImagenes());
+		fondo = new Fondo(cargarImagenes());
 		//Configuramos el tamaño y la velocidad
 		fondo.setSize(Config.w, Config.h / 2);
 		fondo.setSpeed(1);
@@ -102,10 +121,10 @@ public class EscenaPrincipal implements Screen,ContactListener
 	private Array<Texture>  cargarImagenes()
 	{
 		Array<Texture> texturas = new Array<Texture>();
-		for (int i = 1; i <= 4; i++)
+		for (int i = 1; i <= 5; i++)
 		{
 			texturas.add(new Texture(Gdx.files.internal("Parallax" + i + ".png")));
-			texturas.get(texturas.size - 1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+			//texturas.get(texturas.size - 1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
 		}
 		return texturas;
 	}
@@ -175,6 +194,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 		if(nave!=null&&nave.getDisparos()>=10)
 		{
 			nave.eliminaBalas();
+			nave.dispose();
 			nave.remove();
 			nave=null;
 			Config.SONIDOS[5].play();
@@ -189,8 +209,20 @@ public class EscenaPrincipal implements Screen,ContactListener
 	{
 		//Sumamos al ángulo y se obtiene el residuo para evitar overflow.
 		a=(float)((a+0.001)%(float)Math.PI);
+		fondo.setAng(a);
 		//Calculamos el coseno. cos(0)=1 Día. cos(pi/2)=0 Noche.
 		float ax=Math.abs((float)Math.cos(a));
+		if(ax<0.5f&&dia)
+		{
+			dia=false;
+			fondo.setMomento(dia);
+		}
+		else if(ax>0.5&&!dia)
+		{
+			dia=true;
+			fondo.setMomento(dia);
+		}
+
 		Gdx.gl.glClearColor(r*ax / 255f, g*ax / 255f, b*ax / 255f, 1);
 	}
 
@@ -223,6 +255,8 @@ public class EscenaPrincipal implements Screen,ContactListener
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 		estados();
+		if(debug)
+			camaraBordes.render(Config.mundo,camara.combined);
 	}
 
 	@Override
@@ -262,15 +296,18 @@ public class EscenaPrincipal implements Screen,ContactListener
 	@Override
 	public void beginContact(Contact contact)
 	{
-		/*if(contact.getFixtureA().getUserData()=="F"&&contact.getFixtureB().getUserData()=="B"||
-				contact.getFixtureA().getUserData()=="B"&&contact.getFixtureB().getUserData()=="F")
-		{
-			System.out.println("Entro");
-			Body cuerpo=contact.getFixtureA().getBody();
-			cuerpo.destroyFixture(contact.getFixtureA());
-
-			contact.getFixtureB().getBody().destroyFixture(contact.getFixtureB());
-		}*/
+		if(!contact.getFixtureA().isSensor()&&!contact.getFixtureB().isSensor())
+			if(contact.getFixtureA().getUserData()=="F"&&contact.getFixtureB().getUserData()=="B"||
+					contact.getFixtureA().getUserData()=="B"&&contact.getFixtureB().getUserData()=="F")
+			{
+				contact.getFixtureB().setSensor(true);
+				contact.getFixtureA().setSensor(true);
+				Config.SONIDOS[7].play();
+			}
+			else if(contact.getFixtureA().getUserData()=="B")
+				contact.getFixtureA().setSensor(true);
+			else if(contact.getFixtureB().getUserData()=="B")
+				contact.getFixtureB().setSensor(true);
 	}
 
 	@Override
