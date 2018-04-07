@@ -15,7 +15,7 @@ public class Fondo extends Actor {
 	float ang=0;
 	private float x,y,width,heigth,escalaX,escalaY;
 	private int origenX, origenY,rotacion,srcX,srcY;
-	private boolean flipX,flipY;
+	private boolean flipX,flipY,noche;
 
 	private int speed;
 
@@ -33,6 +33,7 @@ public class Fondo extends Actor {
 		heigth = Config.h;
 		escalaX = escalaY = 1;
 		flipX = flipY = false;
+		noche=false;
 	}
 
 	public void setSpeed(int newSpeed){
@@ -44,7 +45,7 @@ public class Fondo extends Actor {
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
-		batch.draw(ciclo,0,-heigth/5,width/2,0,heigth,heigth,1,1,-30*(float)Math.sin(ang),0,0,ciclo.getWidth(),ciclo.getHeight(),false,false);
+		batch.draw(ciclo,0,0,width/2,heigth/2,width,heigth,1,1,ang,0,0,ciclo.getWidth(),ciclo.getHeight(),false,noche);
 		scroll+=speed;
 		for(int i = 0;i<4;i++) {
 			srcX = scroll + i*this.LAYER_SPEED_DIFFERENCE *scroll;
@@ -70,10 +71,6 @@ public class Fondo extends Actor {
 	public void setAng(float g)
 	{
 		ang=g;
-	}
-	public void setMomento(boolean dia)
-	{
-		flipY=dia;
 	}
 }
 

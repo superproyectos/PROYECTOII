@@ -146,7 +146,6 @@ public class Creador
 	{
 		toqueCreador();
 		dibujaFigura(figura);
-		Config.mundo.step(Gdx.graphics.getDeltaTime(),6,2);
 		for(Figura a:elementos)
 		{
 			if(a!=null)

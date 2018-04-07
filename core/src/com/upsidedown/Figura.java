@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 public class Figura
@@ -156,9 +155,12 @@ public class Figura
 	}
 	public void congelar()
 	{
-		cuerpo.setType(BodyDef.BodyType.StaticBody);
-		for (Bloque a:figura)
-			a.setColor(Color.CYAN);
+		if(figura!=null)
+		{
+			cuerpo.setType(BodyDef.BodyType.StaticBody);
+			for (Bloque a:figura)
+				a.setColor(Color.CYAN);
+		}
 	}
 
 }

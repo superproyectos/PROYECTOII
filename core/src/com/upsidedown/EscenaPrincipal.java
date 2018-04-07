@@ -209,20 +209,10 @@ public class EscenaPrincipal implements Screen,ContactListener
 	{
 		//Sumamos al ángulo y se obtiene el residuo para evitar overflow.
 		a=(float)((a+0.001)%(float)Math.PI);
-		fondo.setAng(a);
+
 		//Calculamos el coseno. cos(0)=1 Día. cos(pi/2)=0 Noche.
 		float ax=Math.abs((float)Math.cos(a));
-		if(ax<0.5f&&dia)
-		{
-			dia=false;
-			fondo.setMomento(dia);
-		}
-		else if(ax>0.5&&!dia)
-		{
-			dia=true;
-			fondo.setMomento(dia);
-		}
-
+		fondo.setAng(a*360/((float)Math.PI));
 		Gdx.gl.glClearColor(r*ax / 255f, g*ax / 255f, b*ax / 255f, 1);
 	}
 
@@ -249,6 +239,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 	@Override
 	public void render(float delta)
 	{
+		Config.mundo.step(Gdx.graphics.getDeltaTime(),6,2);
 		cicloDiario();
 		limpiar();
 		rotar();
