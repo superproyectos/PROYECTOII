@@ -14,10 +14,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -27,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.upsidedown.punave.Bala;
 import com.upsidedown.punave.Nave;
 
 import static com.sun.corba.se.impl.naming.cosnaming.NamingContextImpl.debug;
@@ -191,7 +194,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 
 	private void estados()
 	{
-		if(nave!=null&&nave.getDisparos()>=10)
+		if(nave!=null&&nave.getDisparos()>=10&&nave.getDisparadas()==0)
 		{
 			nave.eliminaBalas();
 			nave.dispose();
@@ -287,18 +290,44 @@ public class EscenaPrincipal implements Screen,ContactListener
 	@Override
 	public void beginContact(Contact contact)
 	{
-		if(!contact.getFixtureA().isSensor()&&!contact.getFixtureB().isSensor())
+		/*if(!contact.getFixtureA().isSensor()&&!contact.getFixtureB().isSensor())
 			if(contact.getFixtureA().getUserData()=="F"&&contact.getFixtureB().getUserData()=="B"||
 					contact.getFixtureA().getUserData()=="B"&&contact.getFixtureB().getUserData()=="F")
 			{
 				contact.getFixtureB().setSensor(true);
 				contact.getFixtureA().setSensor(true);
-				Config.SONIDOS[7].play();
+
 			}
 			else if(contact.getFixtureA().getUserData()=="B")
 				contact.getFixtureA().setSensor(true);
 			else if(contact.getFixtureB().getUserData()=="B")
-				contact.getFixtureB().setSensor(true);
+				contact.getFixtureB().setSensor(true);*/
+		try
+		{
+			Fixture a = contact.getFixtureA(), b = contact.getFixtureB();
+			if (a.getUserData()instanceof Bala)
+			{
+				Fixture ax = a;
+				a = b;
+				b = ax;
+			}
+			if (b.getUserData() instanceof Bala)
+			{
+				Bala bala = (Bala) b.getUserData();
+				Figura fig = (Figura) a.getUserData();
+
+				if (fig.getTipo() == 0)
+					fig.buscabloque(bala.x, bala.y + bala.radius);
+				if (nave != null)
+					nave.isHit(bala);
+				Config.SONIDOS[7].play();
+			}
+		}
+		catch (Exception e)
+		{
+			//La bala se borró pero
+		}
+
 	}
 
 	@Override

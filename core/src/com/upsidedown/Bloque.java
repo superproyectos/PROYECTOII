@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 
 public class Bloque extends Rectangle
 {
@@ -11,6 +12,8 @@ public class Bloque extends Rectangle
 	private Color color;
 	private float vx;
 	private float vy;
+	private Fixture fix;
+	private boolean hit;
 	public Bloque(float x, float y, float w, float h, Color color)
 	{
 		this.x=x;this.y=y;
@@ -19,6 +22,8 @@ public class Bloque extends Rectangle
 		shape=new ShapeRenderer();
 		vx=0;
 		vy=0;
+		fix=null;
+		hit=false;
 	}
 	public Bloque(Rectangle bloque,Color color)
 	{
@@ -29,6 +34,8 @@ public class Bloque extends Rectangle
 		this.color=color;
 		shape=new ShapeRenderer();
 		vx=vy=0;
+		fix=null;
+		hit=false;
 	}
 	public void dibujar(float angulo)
 	{
@@ -58,5 +65,20 @@ public class Bloque extends Rectangle
 	{
 		this.color=color;
 	}
-
+	public void setFix(Fixture fixture)
+	{
+		fix=fixture;
+	}
+	public Fixture getFix()
+	{
+		return fix;
+	}
+	public void sethit(boolean h)
+	{
+		hit=h;
+	}
+	public boolean gethit()
+	{
+		return hit;
+	}
 }

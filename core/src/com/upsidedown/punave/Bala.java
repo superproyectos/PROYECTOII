@@ -16,11 +16,13 @@ public class Bala extends Circle
 {
 	private ShapeRenderer shape;
 	private Body cuerpo;
+	boolean hit;
 	public Bala(float x,float y,float r)
 	{
 		this.set(x,y,r);
 		shape=new ShapeRenderer();
 		crearCuerpo();
+		hit=false;
 	}
 	private void dibujar()
 	{
@@ -48,13 +50,20 @@ public class Bala extends Circle
 		propiedades.shape=shape;
 		propiedades.density=5f;
 		Fixture fixture=cuerpo.createFixture(propiedades);
-		fixture.setUserData("B");
+		fixture.setUserData(this);
 		shape.dispose();
 	}
-	public void actualizar()
+	public boolean actualizar()
 	{
-		this.setPosition(cuerpo.getPosition().x*Config.PPM,cuerpo.getPosition().y*Config.PPM);
-		dibujar();
+		if(!hit)
+		{
+			this.setPosition(cuerpo.getPosition().x*Config.PPM,cuerpo.getPosition().y*Config.PPM);
+			dibujar();
+			return true;
+		}
+		else
+			this.dispose();
+		return false;
 	}
 	private void eliminaCuerpo()
 	{
@@ -66,5 +75,9 @@ public class Bala extends Circle
 	{
 		eliminaCuerpo();
 		shape.dispose();
+	}
+	public void sethit(boolean hit)
+	{
+		this.hit=hit;
 	}
 }

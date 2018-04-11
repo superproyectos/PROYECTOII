@@ -14,11 +14,13 @@ public class Figura
 	private Array<Bloque>figura;
 	private Body cuerpo;
 	private int tipo;
+	private boolean hit;
 	public Figura(Array<Bloque>figura,int tipo)
 	{
 		this.figura=new Array<Bloque>();
 		copiar(figura);
 		this.tipo=tipo;
+		hit=false;
 		cajaColision();
 	}
 	public Figura(Bloque figura,int tipo)
@@ -26,6 +28,7 @@ public class Figura
 		this.figura=new Array<Bloque>();
 		this.figura.add(figura);
 		this.tipo=tipo;
+		hit=false;
 		cajaColision();
 	}
 	private void cajaColision()
@@ -58,10 +61,8 @@ public class Figura
 			propiedades.restitution=.1f;
 			propiedades.friction=0.3f;
 			Fixture fixture=cuerpo.createFixture(propiedades);
-			if(tipo==0)
-				fixture.setUserData("F");
-			else
-				fixture.setUserData("P");
+			fixture.setUserData(this);
+			bloque.setFix(fixture);
 			shape.dispose();
 			creado=true;
 		}
@@ -86,7 +87,6 @@ public class Figura
 	public void actualizar()
 	{
 		float x,y,vx,vy;
-		int cont=0;
 		Array<Fixture>propiedades=cuerpo.getFixtureList();
 		if(figura!=null)
 			for (Bloque bloque:figura)
@@ -113,16 +113,29 @@ public class Figura
 				vy=y*(float)Math.cos(cuerpo.getAngle())+x*(float)Math.sin(cuerpo.getAngle());
 				vx+=cuerpo.getPosition().x;
 				vy+=cuerpo.getPosition().y;
-				bloque.setPosition(vx*Config.PPM-bloque.width/2,vy*Config.PPM-bloque.height/2);
-				if(bloque.y>Config.h+bloque.width*4)
-				{
-					dispose();
-					break;
+				if(!bloque.gethit()) {
+					bloque.setPosition(vx * Config.PPM - bloque.width / 2, vy * Config.PPM - bloque.height / 2);
+					if(bloque.y>Config.h+bloque.width*4)
+					{
+						dispose();
+						break;
+					}
+					bloque.dibujar((float)(cuerpo.getAngle() * 180 / Math.PI));
 				}
+				else
+				{
+					if(bloque!= null) {
+						if(figura.contains(bloque,false))
+						{
+							figura.get(figura.indexOf(bloque, false)).dispose();
+							figura.removeValue(bloque,false);
+							cuerpo.destroyFixture(bloque.getFix());
+						}
 
-				if(!propiedades.get(cont).isSensor())
-					bloque.dibujar((float)(cuerpo.getAngle()*180/Math.PI));
-				cont++;
+						bloque.sethit(false);
+						bloque = null;
+					}
+				}
 		}
 
 	}
@@ -131,19 +144,7 @@ public class Figura
 		for (Bloque bloque:original)
 			figura.add(bloque);
 	}
-	private void todosSensores()
-	{
-		boolean es=false;
-		if(cuerpo!=null)
-			for(Fixture a:cuerpo.getFixtureList())
-				if(!a.isSensor())
-				{
-					es=true;
-					break;
-				}
-		if(!es)
-			dispose();
-	}
+
 	public void dispose()
 	{
 		for (Bloque bloque:figura)
@@ -161,6 +162,24 @@ public class Figura
 			for (Bloque a:figura)
 				a.setColor(Color.CYAN);
 		}
+	}
+	public int getTipo()
+	{
+		return tipo;
+	}
+	public void buscabloque(float x, float y)
+	{
+		for(Bloque a: figura)
+			if(a.contains(x,y))
+			{
+				a.sethit(true);
+				break;
+			}
+	}
+
+	public void sethit()
+	{
+		hit=true;
 	}
 
 }

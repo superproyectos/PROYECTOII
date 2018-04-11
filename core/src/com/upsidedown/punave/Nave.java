@@ -44,6 +44,10 @@ public class Nave extends Actor
 			disparos++;
 		}
 	}
+	public int getDisparadas()
+	{
+		return balas.size;
+	}
 	public Byte getDisparos()
 	{
 		return disparos;
@@ -62,7 +66,9 @@ public class Nave extends Actor
 		}
 
 		for(Bala bala:balas)
-			bala.actualizar();
+			if(!bala.actualizar()){
+				balas.removeValue(bala, false);
+			}
 	}
 	public void actualizar()
 	{
@@ -89,6 +95,15 @@ public class Nave extends Actor
 	public void act (float delta) {
 		super.act(delta);
 		//campoJuego();
+
+	}
+
+	public void isHit(Bala bala)
+	{
+		if ((bala!=null)&&balas.contains(bala,false))
+		{
+			balas.get(balas.indexOf(bala,false)).sethit(true);
+		}
 
 	}
 }
