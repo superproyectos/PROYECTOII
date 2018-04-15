@@ -64,7 +64,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 	{
 		//Inicializamos variables
 		Juego = UnJuego;
-		Config.setMundo(new Vector2(0, 5f));
+		Config.setMundo(new Vector2(0, 10f));
 		stage = new Stage(new ScreenViewport());
 		batch = new SpriteBatch();
 		tablero = new Tablero();
@@ -290,18 +290,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 	@Override
 	public void beginContact(Contact contact)
 	{
-		/*if(!contact.getFixtureA().isSensor()&&!contact.getFixtureB().isSensor())
-			if(contact.getFixtureA().getUserData()=="F"&&contact.getFixtureB().getUserData()=="B"||
-					contact.getFixtureA().getUserData()=="B"&&contact.getFixtureB().getUserData()=="F")
-			{
-				contact.getFixtureB().setSensor(true);
-				contact.getFixtureA().setSensor(true);
 
-			}
-			else if(contact.getFixtureA().getUserData()=="B")
-				contact.getFixtureA().setSensor(true);
-			else if(contact.getFixtureB().getUserData()=="B")
-				contact.getFixtureB().setSensor(true);*/
 		try
 		{
 			Fixture a = contact.getFixtureA(), b = contact.getFixtureB();
@@ -317,11 +306,49 @@ public class EscenaPrincipal implements Screen,ContactListener
 				Figura fig = (Figura) a.getUserData();
 
 				if (fig.getTipo() == 0)
-					fig.buscabloque(bala.x, bala.y + bala.radius);
+					fig.buscabloque(bala.x, bala.y + bala.radius+2);
 				if (nave != null)
 					nave.isHit(bala);
 				Config.SONIDOS[7].play();
 			}
+			else
+			{
+				Figura fig1 = (Figura) b.getUserData();
+				Figura fig2 = (Figura) a.getUserData();
+
+				if(!fig1.gethit() || !fig2.gethit())
+				{
+
+					float d=0,c=0;
+
+
+
+					if(!fig1.gethit())
+						d = fig1.buscabloque2();
+					else
+						c = fig2.buscabloque2();
+
+					if(d!=0)
+					{
+						Gdx.app.log("message", "Entro con D: " + d);
+						fig1.setyMax(d);
+						fig1.setScrollY(true);
+					}
+					else {
+						if(c!=0) {
+							Gdx.app.log("message", "Entro con C: " + c);
+							fig2.setyMax(c);
+							fig2.setScrollY(true);
+						}
+					}
+
+
+					fig1.sethit(true);
+					fig2.sethit(true);
+
+				}
+			}
+
 		}
 		catch (Exception e)
 		{

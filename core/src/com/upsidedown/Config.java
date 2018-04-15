@@ -13,6 +13,7 @@ public class Config
 {
 	public static float w= Gdx.graphics.getWidth();
 	public static float h= Gdx.graphics.getHeight();
+	public static float mid= Gdx.graphics.getHeight()-(Gdx.graphics.getWidth()/13*2)-((Gdx.graphics.getWidth()/ 13)*6)-10;
 	public static World mundo;
 	public static Stage escenario;
 	public static final int MARGEN=2;

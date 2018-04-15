@@ -28,6 +28,7 @@ public class Creador
 	private Rectangle areaCreacion;
 	private ShapeRenderer shape;
 	private Color color;
+	private int NumCuadros;
 	private Bloque ver;
 	/*<----------1. Constructor---------->*/
 
@@ -38,9 +39,12 @@ public class Creador
 		figura = new Array<Bloque>();
 		elementos=new Array<Figura>();
 		ver=new Bloque(areaCreacion,Config.color(0,0,0,1));
+		NumCuadros=0;
+
 
 		crearPiso();
 		cambiarColor();
+		NuevoNum();
 
 	}
 	private void crearPiso()
@@ -52,16 +56,27 @@ public class Creador
 		base.height=Config.w/13*2;
 		base.y=(Config.h-base.height);
 		Bloque aux=new Bloque(base,color);
-		elementos.add(new Figura(aux,1));
+		aux.setPiso();
+		elementos.add(new Figura(aux,2));
 	}
 	private void cambiarColor()
 	{
-		color=Config.colores[new Random(System.currentTimeMillis()).nextInt(Config.colores.length)];
+		int i=new Random(System.currentTimeMillis()).nextInt(Config.colores.length);
+		for(;i==7;)
+			i=new Random(System.currentTimeMillis()).nextInt(Config.colores.length);
+		color = Config.colores[new Random(System.currentTimeMillis()).nextInt(Config.colores.length)];
 	}
+	private void NuevoNum()
+	{
+		NumCuadros= new Random(System.currentTimeMillis()).nextInt(10)+1;
+	}
+
+
 	/*<----------2. Detectar toque dentro del lienzo---------->*/
 
 	public void toqueCreador()
 	{
+		Gdx.app.log("NUmeroooooooooooooooooo","NUm:"+NumCuadros);
 		if(Gdx.input.isTouched())
 		{
 			float ancho = Config.w / 9;
@@ -77,7 +92,9 @@ public class Creador
 						Bloque aux = figura.peek();
 						if((aux.x==bloque.x&&((int)Math.abs(aux.y-bloque.y)==(int)ancho))||
 								(aux.y==bloque.y&&((int)Math.abs(aux.x-bloque.x)==(int)ancho)))
+
 							figura.add(bloque);
+
 					}
 					else
 					{
@@ -96,15 +113,15 @@ public class Creador
 		}
 		else
 		{
-			if(figura.size>0)
+			if(figura.size==NumCuadros)
 			{
 				cambiarDimensiones();
 				elementos.add(new Figura(figura,0));
-				figura.clear();
 				cambiarColor();
+				NuevoNum();
 				Config.SONIDOS[2].play();
 			}
-
+			figura.clear();
 
 		}
 	}
@@ -131,9 +148,9 @@ public class Creador
 
 	/*<----------4. Dibujar la figura creada---------->*/
 
-	public void dibujaFigura(Array<Bloque> figura)
+	public void dibujaFigura(Array<Bloque> figura, Color colors)
 	{
-		shape.setColor(color);
+		shape.setColor(colors);
 		for(Bloque bloque: figura)
 		{
 			shape.begin(ShapeRenderer.ShapeType.Filled);
@@ -144,21 +161,47 @@ public class Creador
 
 	public void dibujaCreador()
 	{
+	   boolean stop1,stop=false;
 		toqueCreador();
-		dibujaFigura(figura);
+		if(figura.size == NumCuadros)
+		{
+			dibujaFigura(figura,color);
+		}
+		else
+		{
+			dibujaFigura(figura,Config.colores[7]);
+		}
+
 		for(Figura a:elementos)
 		{
-			if(a!=null)
-				a.actualizar();
+			if(a!=null) {
+
+				stop1=a.actualizar();
+
+               if( (stop1) && (!stop) )
+				   stop= stop1;
+            }
+
 			else
 				elementos.removeIndex(elementos.indexOf(a,false));
 		}
-		//ver.dibujar(0);
+		if (stop){
+			elementos.get(0).setScrollY(false);
+			for(Figura a:elementos) {
+				if (a.buscabloque3() > (Config.h + (Config.w / 13) * 3)) {
+					a.congelar();
+				}
+				a.setMovey();
+			}
+		}
+
 	}
 	public void congelar()
 	{
-		for (Figura a:elementos)
-			a.congelar();
+		for (Figura a:elementos) {
+			if(a.getTipo() != 2)
+				a.congelar();
+		}
 	}
 	public void salida()
 	{

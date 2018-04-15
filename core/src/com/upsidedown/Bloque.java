@@ -14,6 +14,8 @@ public class Bloque extends Rectangle
 	private float vy;
 	private Fixture fix;
 	private boolean hit;
+	private boolean Piso;
+	private float movey;
 	public Bloque(float x, float y, float w, float h, Color color)
 	{
 		this.x=x;this.y=y;
@@ -24,6 +26,7 @@ public class Bloque extends Rectangle
 		vy=0;
 		fix=null;
 		hit=false;
+		Piso=false;
 	}
 	public Bloque(Rectangle bloque,Color color)
 	{
@@ -36,6 +39,7 @@ public class Bloque extends Rectangle
 		vx=vy=0;
 		fix=null;
 		hit=false;
+		Piso=false;
 	}
 	public void dibujar(float angulo)
 	{
@@ -81,4 +85,8 @@ public class Bloque extends Rectangle
 	{
 		return hit;
 	}
+	public void setPiso(){ Piso=true;}
+	public void setmovey(float ym){ movey=ym;}
+	public float getmovey(){return movey;}
+	public boolean getPiso(){ return Piso;}
 }
