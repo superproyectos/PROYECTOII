@@ -285,11 +285,11 @@ public class EscenaPrincipal implements Screen,ContactListener
 	@Override
 	public void dispose()
 	{
-		batch.dispose();
+		//batch.dispose();
 		tablero.dispose();
 		musica.dispose();
-		for(Sound a:Config.SONIDOS)
-			a.dispose();
+		/*for(Sound a:Config.SONIDOS)
+			a.dispose();*/
 	}
 
 	@Override
