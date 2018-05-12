@@ -231,8 +231,8 @@ public class Creador
 
 	public void BloquesRandom(){
 		int i = new Random(System.currentTimeMillis()).nextInt(30)+11;
-		int a=new Random(System.currentTimeMillis()).nextInt((int)Config.w)+1;
 		for(int j=0; j<=i;j++){
+			int a=new Random(System.currentTimeMillis()).nextInt((int)Config.w)+1;
 			Bloque aux=new Bloque(a,Config.h,Config.w / 13,Config.w / 13,color);
 			elementos.add(new Figura(aux,0));
 			cambiarColor();
