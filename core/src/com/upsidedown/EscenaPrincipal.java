@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,7 +39,6 @@ public class EscenaPrincipal implements Screen,ContactListener
 {
 	//Variables de escena
 	private Game Juego;
-	private Stage stage;
 	//Variables de renderizado
 	private SpriteBatch batch;
 	private ShapeRenderer shape;
@@ -65,7 +65,6 @@ public class EscenaPrincipal implements Screen,ContactListener
 		//Inicializamos variables
 		Juego = UnJuego;
 		Config.setMundo(new Vector2(0, 10f));
-		stage = new Stage(new ScreenViewport());
 		batch = new SpriteBatch();
 		tablero = new Tablero();
 		shape = new ShapeRenderer();
@@ -96,12 +95,12 @@ public class EscenaPrincipal implements Screen,ContactListener
 
 	private void generaEscenario()
 	{
-		Config.escenario = stage;
-		Gdx.input.setInputProcessor(stage);
+
+		Gdx.input.setInputProcessor(Config.escenario);
 		//Añadimos al escenario
-		stage.addActor(tablero);
-		stage.addActor(ponernave);
-		stage.addActor(congelar);
+		Config.escenario.addActor(tablero);
+		Config.escenario.addActor(ponernave);
+		Config.escenario.addActor(congelar);
 	}
 
 	/*<----------CREAR FONDO---------->
@@ -115,7 +114,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 		fondo.setSize(Config.w, Config.h / 2);
 		fondo.setSpeed(1);
 		//Añadimos al escenario
-		stage.addActor(fondo);
+		Config.escenario.addActor(fondo);
 	}
 
 	/*<----------CARGAR IMÁGENES---------->
@@ -158,7 +157,7 @@ public class EscenaPrincipal implements Screen,ContactListener
 				if(nave==null)
 				{
 					nave=new Nave(Config.w/2,Config.h/5);
-					stage.addActor(nave);
+					Config.escenario.addActor(nave);
 					Config.SONIDOS[1].play();
 					tablero.salida();
 				}
@@ -205,6 +204,12 @@ public class EscenaPrincipal implements Screen,ContactListener
 		}
 	}
 
+
+
+
+
+
+
 	/*<----------CICLO DÍA NOCHE---------->
 	* Transcurso del día - noche*/
 
@@ -246,8 +251,8 @@ public class EscenaPrincipal implements Screen,ContactListener
 		cicloDiario();
 		limpiar();
 		rotar();
-		stage.act(Gdx.graphics.getDeltaTime());
-		stage.draw();
+		Config.escenario.act(Gdx.graphics.getDeltaTime());
+		Config.escenario.draw();
 		estados();
 		if(debug)
 			camaraBordes.render(Config.mundo,camara.combined);

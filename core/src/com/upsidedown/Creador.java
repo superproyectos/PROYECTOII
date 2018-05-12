@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
@@ -28,8 +29,9 @@ public class Creador
 	private Rectangle areaCreacion;
 	private ShapeRenderer shape;
 	private Color color;
-	private int NumCuadros;
+	private NumBloques Bloques_permitidos;
 	private Bloque ver;
+	private boolean Game_Over;
 	/*<----------1. Constructor---------->*/
 
 	public Creador(ShapeRenderer shape)
@@ -39,12 +41,14 @@ public class Creador
 		figura = new Array<Bloque>();
 		elementos=new Array<Figura>();
 		ver=new Bloque(areaCreacion,Config.color(0,0,0,1));
-		NumCuadros=0;
+		Game_Over=false;
 
 
 		crearPiso();
 		cambiarColor();
-		NuevoNum();
+		Bloques_permitidos= new NumBloques();
+		Bloques_permitidos.act_Numero_Bloques();
+		Bloques_permitidos.setColor(color);
 
 	}
 	private void crearPiso()
@@ -66,17 +70,18 @@ public class Creador
 			i=new Random(System.currentTimeMillis()).nextInt(Config.colores.length);
 		color = Config.colores[new Random(System.currentTimeMillis()).nextInt(Config.colores.length)];
 	}
-	private void NuevoNum()
+/*	private void NuevoNum()
 	{
 		NumCuadros= new Random(System.currentTimeMillis()).nextInt(10)+1;
 	}
-
+*/
 
 	/*<----------2. Detectar toque dentro del lienzo---------->*/
 
 	public void toqueCreador()
 	{
-		Gdx.app.log("NUmeroooooooooooooooooo","NUm:"+NumCuadros);
+		Gdx.app.log("NUmeroooooooooooooooooo","NUm:"+ Bloques_permitidos.getNumero_Bloques());
+		Bloques_permitidos.setLabel();
 		if(Gdx.input.isTouched())
 		{
 			float ancho = Config.w / 9;
@@ -113,12 +118,14 @@ public class Creador
 		}
 		else
 		{
-			if(figura.size==NumCuadros)
+			if(figura.size== Bloques_permitidos.getNumero_Bloques())
 			{
 				cambiarDimensiones();
 				elementos.add(new Figura(figura,0));
 				cambiarColor();
-				NuevoNum();
+				Bloques_permitidos.act_Numero_Bloques();
+				Bloques_permitidos.setColor(color);
+				Bloques_permitidos.setActFondo(true);
 				Config.SONIDOS[2].play();
 			}
 			figura.clear();
@@ -161,9 +168,10 @@ public class Creador
 
 	public void dibujaCreador()
 	{
-	   boolean stop1,stop=false;
+		Bloques_permitidos.fondo();
+	    boolean stop1,stop=false;
 		toqueCreador();
-		if(figura.size == NumCuadros)
+		if(figura.size == Bloques_permitidos.getNumero_Bloques())
 		{
 			dibujaFigura(figura,color);
 		}
@@ -195,6 +203,14 @@ public class Creador
 			}
 		}
 
+		if(!Game_Over) {
+			comprobar_GameOver(elementos);
+		}
+		else{
+			float inx=Gdx.input.getAccelerometerX();
+			float iny=Gdx.input.getAccelerometerY();
+			Config.mundo.setGravity(new Vector2(-inx, -iny));
+		}
 	}
 	public void congelar()
 	{
@@ -210,5 +226,36 @@ public class Creador
 	public void entrada()
 	{
 		areaCreacion.y=Config.w/9;
+	}
+
+
+	public void BloquesRandom(){
+		int i = new Random(System.currentTimeMillis()).nextInt(30)+11;
+		int a=new Random(System.currentTimeMillis()).nextInt((int)Config.w)+1;
+		for(int j=0; j<=i;j++){
+			Bloque aux=new Bloque(a,Config.h,Config.w / 13,Config.w / 13,color);
+			elementos.add(new Figura(aux,0));
+			cambiarColor();
+		}
+
+	}
+	public void comprobar_GameOver(Array<Figura> elementos){
+		for(Figura a:elementos) {
+			if (a.bloque_caido()){
+				Game_Over=true;
+				break;
+			}
+		}
+		if (Game_Over){
+			Bloque aux=new Bloque(0,0,Config.w,0,color);
+			elementos.add(new Figura(aux,1));
+			aux=new Bloque(0,0,0,Config.h,color);
+			elementos.add(new Figura(aux,1));
+			aux= new Bloque(Config.w,0,0,Config.h,color);
+			elementos.add(new Figura(aux,1));
+			BloquesRandom();
+		}
+
+
 	}
 }

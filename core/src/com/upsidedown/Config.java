@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Config
 {
@@ -15,9 +17,10 @@ public class Config
 	public static float h= Gdx.graphics.getHeight();
 	public static float mid= Gdx.graphics.getHeight()-(Gdx.graphics.getWidth()/13*2)-((Gdx.graphics.getWidth()/ 13)*6)-10;
 	public static World mundo;
-	public static Stage escenario;
+	public static final Stage escenario =new Stage(new ScreenViewport());
 	public static final int MARGEN=2;
 	public static final float PPM= 100;
+	public static final Skin SKIN = new Skin(Gdx.files.internal("skin/comic-ui.json"));
 	public static final Color []colores={
 			Config.color(203, 67, 53,1)/*rojo*/,
 			Config.color(136, 78, 160,1)/*morado*/,

@@ -248,6 +248,22 @@ public class Figura
 		return max;
 	}
 
+	//CAMBIA LA GRAVEDAD AL PERDER
+	public boolean bloque_caido()
+	{
+		float extremo_izquierdo=(Config.w/13*3)-10;
+		float extremo_derecho= extremo_izquierdo + ((Config.w/13*7)+10);
+		if(this.figura !=null) {
+			for (Bloque a : this.figura)
+				if (((a.y) > Config.h) && ( (a.x < extremo_izquierdo) || (a.x > extremo_derecho) ) &&(this.tipo !=2) ) {
+
+					return true;
+				}
+
+		}
+		return false;
+	}
+
 
 
 public void setyMax(float ym){
